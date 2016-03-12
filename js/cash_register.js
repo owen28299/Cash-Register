@@ -3,79 +3,103 @@ function cashRegister() {
   var display = [0, 0];
   var balance = 0;
   var decimalMode = false;
-
+  var zeroAfterDecimal = false;
 
   function getDisplay(){
-    return display[0] + "." + display[1];
+    if(display.length === 2){
+      return parseFloat(display[0] + "." + display[1]).toFixed(2);
+    }
+    else{
+      var zeroes = display.slice(2, display.length).join("");
+      return parseFloat(display[0] + "." + zeroes + display[1]).toFixed(2);
+    }
   }
 
   function setDisplay(num){
 
-    var newNum;
+    if (display.length < 4 &&
+      ((zeroAfterDecimal === false && display[1] < 9) ||
+      (zeroAfterDecimal === true && display[1] < 9))
+    ){
 
-    if (decimalMode === false){
+      var newNum;
 
-      if(num === "00"){
-        display[0] = display[0] * 100;
+      if (decimalMode === false){
+
+        if(num === "00"){
+          display[0] = display[0] * 100;
+        }
+
+        else {
+
+        newNum = parseInt(num);
+
+          if(display[0] === 0) {
+            display[0] = newNum;
+          }
+          else {
+            display[0] = display[0] * 10;
+            display[0] = display[0] + newNum;
+          }
+
+        }
       }
+
+      //decimal mode is true
 
       else {
-
-      newNum = parseInt(num);
-
-        if(display[0] === 0) {
-          display[0] = newNum;
+        if(num === "00"){
+          display[1] = display[1];
         }
+
+        //zeroAfterDecimal is true
+        if (num === "0" && parseInt(display[1]) === 0){
+          zeroAfterDecimal = true;
+          display.push(0);
+        }
+
         else {
-          display[0] = display[0] * 10;
-          display[0] = display[0] + newNum;
-        }
 
+          newNum = parseInt(num);
+
+            if(display[1] === 0) {
+              display[1] = newNum;
+            }
+            else {
+              display[1] = display[1] * 10;
+              display[1] = display[1] + newNum;
+            }
+
+        }
       }
+
     }
-
-    else {
-            if(num === "00"){
-        display[1] = display[1] * 100;
-      }
-
-      else {
-
-      newNum = parseInt(num);
-
-        if(display[1] === 0) {
-          display[1] = newNum;
-        }
-        else {
-          display[1] = display[1] * 10;
-          display[1] = display[1] + newNum;
-        }
-
-      }
-    }
-
-
   }
 
   function clearDisplay(){
-    display[0] = 0;
-    display[1] = 0;
+    display = [0, 0];
     decimalMode = false;
+    zeroAfterDecimal = false;
   }
 
   function getBalance(){
-    display[0] = balance.toString().split(".")[0];
-    display[1] = balance.toString().split(".")[1];
-    decimalMode = false;
+
+    if(balance !== 0){
+      display[0] = balance.toString().split(".")[0];
+      display[1] = balance.toString().split(".")[1];
+      decimalMode = false;
+    }
  }
 
   function depositCash(){
-    balance += parseFloat(display[0] + "."  + display[1]);
+    var zeroes = display.slice(2, display.length).join("");
+    balance += parseFloat(display[0] + "."  + zeroes + display[1]);
     decimalMode = false;
  }
 
  function withdrawCash(){
-    balance -= display[0];
+    var zeroes = display.slice(2, display.length).join("");
+    balance -= parseFloat(display[0] + "."  + zeroes + display[1]);
     decimalMode = false;
  }
 
