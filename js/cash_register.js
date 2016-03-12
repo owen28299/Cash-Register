@@ -40,23 +40,28 @@ function cashRegister() {
 
       if (decimalMode === false){
 
-        if(num === "00"){
-          calcStatus.display[0] = calcStatus.display[0] * 100;
-        }
+        if (calcStatus.display[0] <= 9999) {
 
-        else {
-
-        newNum = parseInt(num);
-
-          if(calcStatus.display[0] === 0) {
-            calcStatus.display[0] = newNum;
+          if(num === "00"){
+            calcStatus.display[0] = calcStatus.display[0] * 100;
           }
+
           else {
-            calcStatus.display[0] = calcStatus.display[0] * 10;
-            calcStatus.display[0] = calcStatus.display[0] + newNum;
+
+          newNum = parseInt(num);
+
+            if(calcStatus.display[0] === 0) {
+              calcStatus.display[0] = newNum;
+            }
+            else {
+              calcStatus.display[0] = calcStatus.display[0] * 10;
+              calcStatus.display[0] = calcStatus.display[0] + newNum;
+            }
+
           }
 
         }
+
       }
 
       //decimal mode is true
@@ -113,13 +118,36 @@ function cashRegister() {
 
   function depositCash(){
     var zeroes = calcStatus.display.slice(2, calcStatus.display.length).join("");
-    balance += parseFloat(calcStatus.display[0] + "."  + zeroes + calcStatus.display[1]);
+    if (parseFloat(calcStatus.display[0] + "."  + zeroes + calcStatus.display[1]) >= 0){
+      balance += parseFloat(calcStatus.display[0] + "."  + zeroes + calcStatus.display[1]);
+    }
+
+    else{
+      alert("Please enter a positive number");
+      clearDisplay();
+    }
+
     decimalMode = false;
  }
 
  function withdrawCash(){
     var zeroes = calcStatus.display.slice(2, calcStatus.display.length).join("");
-    balance -= parseFloat(calcStatus.display[0] + "."  + zeroes + calcStatus.display[1]);
+
+    if (balance >= parseFloat(calcStatus.display[0] + "."  + zeroes + calcStatus.display[1])){
+      if(parseFloat(calcStatus.display[0] + "."  + zeroes + calcStatus.display[1]) >= 0) {
+        balance -= parseFloat(calcStatus.display[0] + "."  + zeroes + calcStatus.display[1]);
+      }
+      else{
+        alert("Cannot withdraw negative amounts");
+        clearDisplay();
+      }
+    }
+
+    else{
+      alert("Insufficient Funds");
+      clearDisplay();
+    }
+
     decimalMode = false;
  }
 
@@ -248,6 +276,7 @@ document.getElementById("get balance").onclick = function() {
   document.getElementById('operator').innerHTML = "";
   CR.setOperatorOn(false);
   updateDisplay();
+  CR.clearDisplay();
 };
 
 document.getElementById("deposit cash").onclick = function() {
@@ -276,6 +305,7 @@ document.getElementById("decimal").onclick = function() {
   CR.setDecimalMode();
 };
 
+
 document.getElementById("plus").onclick = function() {
   if(CR.getOperatorStatus() === false){
     document.getElementById('operator').innerHTML = "+";
@@ -297,10 +327,8 @@ document.getElementById("minus").onclick = function() {
 document.getElementById("times").onclick = function() {
   if(CR.getOperatorStatus() === false){
     document.getElementById('operator').innerHTML = "*";
-
-    console.log(CR.getDisplay());
+    CR.getDisplay();
     CR.storeToMemory(CR.getDisplay());
-
     CR.clearDisplay();
     CR.setOperatorOn(true);
     }
@@ -309,10 +337,8 @@ document.getElementById("times").onclick = function() {
 document.getElementById("divide").onclick = function() {
   if(CR.getOperatorStatus() === false){
     document.getElementById('operator').innerHTML = "/";
-
-    console.log(CR.getDisplay());
+    CR.getDisplay();
     CR.storeToMemory(CR.getDisplay());
-
     CR.clearDisplay();
     CR.setOperatorOn(true);
     }
