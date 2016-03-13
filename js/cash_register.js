@@ -104,15 +104,7 @@ function cashRegister() {
 
   function getBalance(){
 
-    if(balance !== 0 || display[0] !== 0 || display[1] !== 0){
-      calcStatus.display[0] = balance.toString().split(".")[0];
-      calcStatus.display[1] = balance.toString().split(".")[1];
-      decimalMode = false;
-    }
-
-    if(balance === 0){
-      clearDisplay();
-    }
+    alert(balance);
 
  }
 
@@ -224,6 +216,8 @@ function cashRegister() {
 
   }
 
+  calcStatus.display.pop();
+
  }
 
   return{
@@ -273,10 +267,6 @@ document.getElementById("clear").onclick = function() {
 
 document.getElementById("get balance").onclick = function() {
   CR.getBalance();
-  document.getElementById('operator').innerHTML = "";
-  CR.setOperatorOn(false);
-  updateDisplay();
-  CR.clearDisplay();
 };
 
 document.getElementById("deposit cash").onclick = function() {
